@@ -21,7 +21,7 @@ const PlaceOrder = () => {
         phone: ""
     })
 
-    const { getTotalCartAmount, token, food_list, cartItems, url, setCartItems,currency,deliveryCharge } = useContext(StoreContext);
+    const { getTotalCartAmount, token, food_list, cartItems, url, setCartItems,currency,deliveryCharge,userId } = useContext(StoreContext);
 
     const navigate = useNavigate();
 
@@ -42,6 +42,7 @@ const PlaceOrder = () => {
             }
         }))
         let orderData = {
+            userId,
             address: data,
             items: orderItems,
             amount: getTotalCartAmount() + deliveryCharge,
@@ -50,7 +51,9 @@ const PlaceOrder = () => {
             let response = await axios.post(url + "/api/order/place", orderData, { headers: { token } });
             if (response.data.success) {
                 const { session_url } = response.data;
+                console.log("Redirecting to Stripe:", session_url);
                 window.location.replace(session_url);
+
             }
             else {
                 toast.error("Something Went Wrong")
